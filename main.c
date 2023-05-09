@@ -194,7 +194,7 @@ void loop() {
 	print_status();
 
 	if (hlt) {
-		printf("\n\nHALT!\n\n");
+		printf("\n\nHALT!\t\t%02x\n\n", regs.a);
 
 		while (1);
 	}
