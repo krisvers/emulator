@@ -23,164 +23,164 @@
 #define HLT 15
 
 char * opcodes[16] = {
-  "ldi", "ldm", "str", "add", "sub", "jnz", "swb", "swc", "swd", "swe", "or", "and", "not", "shl", "shr", "hlt"
+	"ldi", "ldm", "str", "add", "sub", "jnz", "swb", "swc", "swd", "swe", "or", "and", "not", "shl", "shr", "hlt"
 };
 
 struct Registers {
-  uint8_t a, b, c, d, e;
-  uint16_t ip : 12;
+	uint8_t a, b, c, d, e;
+	uint16_t ip : 12;
 } regs;
 
 uint8_t memory[8192] = {
-  LDI << 4, 3,
-  SWD << 4, 0,
-  LDI << 4, 5,
-  SWB << 4, 0,
-  ADD << 4, 0,
-  SWE << 4, 0,
-  SWD << 4, 0,
-  SWB << 4, 0,
-  LDI << 4, 1,
-  SWC << 4, 0,
-  SUB << 4, 0,
-  SWD << 4, 0,
-  SWE << 4, 0,
-  SWC << 4, 0,
-  LDI << 4, 4,
-  JNZ << 4, 0,
-  HLT << 4, 0,
+	LDI << 4, 3,
+	SWD << 4, 0,
+	LDI << 4, 5,
+	SWB << 4, 0,
+	ADD << 4, 0,
+	SWE << 4, 0,
+	SWD << 4, 0,
+	SWB << 4, 0,
+	LDI << 4, 1,
+	SWC << 4, 0,
+	SUB << 4, 0,
+	SWD << 4, 0,
+	SWE << 4, 0,
+	SWC << 4, 0,
+	LDI << 4, 4,
+	JNZ << 4, 0,
+	HLT << 4, 0,
 };
 
 uint16_t instruction = 0;
 uint8_t hlt = 0;
 
 void ldi() {
-  regs.a = instruction & 0xFF;
+	regs.a = instruction & 0xFF;
 }
 
 void ldm() {
-  regs.a = memory[instruction & VALUE_MASK];
+	regs.a = memory[instruction & VALUE_MASK];
 }
 
 void str() {
-  memory[instruction & VALUE_MASK] = regs.a;
+	memory[instruction & VALUE_MASK] = regs.a;
 }
 
 void add() {
-  regs.a = regs.b + regs.c;
+	regs.a = regs.b + regs.c;
 }
 
 void sub() {
-  regs.a = regs.b - regs.c;
+	regs.a = regs.b - regs.c;
 }
 
 void jnz() {
-  if (regs.d != 0) {
-    regs.ip = regs.a + (instruction & VALUE_MASK);
-  }
+	if (regs.d != 0) {
+		regs.ip = regs.a + (instruction & VALUE_MASK);
+	}
 }
 
 void swb() {
-  uint8_t tmp = regs.a;
-  regs.a = regs.b;
-  regs.b = tmp;
+	uint8_t tmp = regs.a;
+	regs.a = regs.b;
+	regs.b = tmp;
 }
 
 void swc() {
-  uint8_t tmp = regs.a;
-  regs.a = regs.c;
-  regs.c = tmp;
+	uint8_t tmp = regs.a;
+	regs.a = regs.c;
+	regs.c = tmp;
 }
 
 void swd() {
-  uint8_t tmp = regs.a;
-  regs.a = regs.d;
-  regs.d = tmp;
+	uint8_t tmp = regs.a;
+	regs.a = regs.d;
+	regs.d = tmp;
 }
 
 void swe() {
-  uint8_t tmp = regs.a;
-  regs.a = regs.e;
-  regs.e = tmp;
+	uint8_t tmp = regs.a;
+	regs.a = regs.e;
+	regs.e = tmp;
 }
 
 void ior() {
-  regs.a = regs.b | regs.c;
+	regs.a = regs.b | regs.c;
 }
 
 void iand() {
-  regs.a = regs.b & regs.c;
+	regs.a = regs.b & regs.c;
 }
 
 void inot() {
-  regs.a = ~regs.b;
+	regs.a = ~regs.b;
 }
 
 void shl() {
-  regs.a = regs.b << regs.c;
+	regs.a = regs.b << regs.c;
 }
 
 void shr() {
-  regs.a = regs.b >> regs.c;
+	regs.a = regs.b >> regs.c;
 }
 
 void fetch_instruction() {
-  instruction = (memory[regs.ip] << 8) | (memory[regs.ip + 1]);
-  regs.ip += 2;
+	instruction = (memory[regs.ip] << 8) | (memory[regs.ip + 1]);
+	regs.ip += 2;
 }
 
 void run_instruction() {
-  switch (instruction >> 12) {
-    case LDI:
-      ldi();
-      break;
-    case LDM:
-      ldm();
-      break;
-    case STR:
-      str();
-      break;
-    case ADD:
-      add();
-      break;
-    case SUB:
-      sub();
-      break;
-    case JNZ:
-      jnz();
-      break;
-	case SWB:
-		swb();
-		break;
-	case SWC:
-		swc();
-		break;
-	case SWD:
-		swd();
-		break;
-	case SWE:
-		swe();
-		break;
-	case OR:
-		ior();
-		break;
-	case AND:
-		iand();
-		break;
-	case NOT:
-		inot();
-		break;
-	case SHL:
-		shl();
-		break;
-	case SHR:
-		shr();
-		break;
-	case HLT:
-		hlt = 1;
-		break;
-	default:
-		break;
+	switch (instruction >> 12) {
+		case LDI:
+			ldi();
+			break;
+		case LDM:
+			ldm();
+			break;
+		case STR:
+			str();
+			break;
+		case ADD:
+			add();
+			break;
+		case SUB:
+			sub();
+			break;
+		case JNZ:
+			jnz();
+			break;
+		case SWB:
+			swb();
+			break;
+		case SWC:
+			swc();
+			break;
+		case SWD:
+			swd();
+			break;
+		case SWE:
+			swe();
+			break;
+		case OR:
+			ior();
+			break;
+		case AND:
+			iand();
+			break;
+		case NOT:
+			inot();
+			break;
+		case SHL:
+			shl();
+			break;
+		case SHR:
+			shr();
+			break;
+		case HLT:
+			hlt = 1;
+			break;
+		default:
+			break;
 	}
 }
 
